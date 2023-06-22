@@ -65,6 +65,7 @@ const { assert, expect } = require("chai") //waffle-matchers
                   await network.provider.send("evm_increaseTime", [interval.toNumber() + 1])
                   await network.provider.send("evm_mine", [])
                   //don't understand Patrick's point... my checkUpkeep function is...public view override and the test still works
+                  //We can use "callStatic" to simulate calling this function and seeing what will it respond.
                   const { upkeepNeeded } = await raffle.callStatic.checkUpkeep([])
                   assert(!upkeepNeeded)
               })
@@ -72,7 +73,7 @@ const { assert, expect } = require("chai") //waffle-matchers
                   await raffle.enterRaffle({ value: raffleEntranceFee })
                   await network.provider.send("evm_increaseTime", [interval.toNumber() + 1])
                   await network.provider.send("evm_mine", [])
-                  raffle.performUpkeep([])
+                  await raffle.performUpkeep([])
                   raffleState = await raffle.getRaffleState()
                   const { upkeepNeeded } = await raffle.callStatic.checkUpkeep([])
                   assert.equal(raffleState.toString(), "1")
@@ -134,7 +135,7 @@ const { assert, expect } = require("chai") //waffle-matchers
                   await expect(
                       vrfCoordinatorV2Mock.fulfillRandomWords(0, raffle.address)
                   ).to.be.revertedWith("nonexistent request")
-                  //For more posible requests we can use a method called "fuzzed testing"
+                  //For more posible numbers for the requestId we can use a method called "fuzzed testing"
                   await expect(
                       vrfCoordinatorV2Mock.fulfillRandomWords(1, raffle.address)
                   ).to.be.revertedWith("nonexistent request")

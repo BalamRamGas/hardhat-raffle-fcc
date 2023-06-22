@@ -12,7 +12,6 @@ developmentChains.includes(network.name)
 
           beforeEach(async function () {
               deployer = (await getNamedAccounts()).deployer
-              //We need to deploy "raffle" & "vrfCoordinatorV2Mock" with fixtures
               raffle = await ethers.getContract("Raffle", deployer)
               raffleEntranceFee = await raffle.getEntranceFee()
               raffleState = await raffle.getRaffleState().toString()
